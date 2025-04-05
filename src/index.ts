@@ -24,6 +24,8 @@ import pdf from './tools/pdf';
 import snapshot from './tools/snapshot';
 import tabs from './tools/tabs';
 import screen from './tools/screen';
+import record from './tools/record';
+import dom from './tools/dom';
 import { console as consoleResource } from './resources/console';
 
 import type { Tool, ToolCapability } from './tools/tool';
@@ -40,6 +42,8 @@ const snapshotTools: Tool[] = [
   ...pdf,
   ...snapshot,
   ...tabs(true),
+  ...record(true),
+  ...dom
 ];
 
 const screenshotTools: Tool[] = [
@@ -51,6 +55,8 @@ const screenshotTools: Tool[] = [
   ...pdf,
   ...screen,
   ...tabs(false),
+  ...record(true),
+  ...dom
 ];
 
 const resources: Resource[] = [

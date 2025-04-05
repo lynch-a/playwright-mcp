@@ -180,6 +180,13 @@ class Tab {
   private _snapshot: PageSnapshot | undefined;
   private _onPageClose: (tab: Tab) => void;
 
+  // New properties for recording network events:
+  recordedEvents: any[] = []; // Array to store captured request/response events.
+  recordingListeners?: {
+    onRequest: (req: playwright.Request) => void;
+    onResponse: (res: playwright.Response) => void;
+  };
+
   constructor(context: Context, page: playwright.Page, onPageClose: (tab: Tab) => void) {
     this.context = context;
     this.page = page;
@@ -219,8 +226,11 @@ class Tab {
       if (options?.captureSnapshot)
         this._snapshot = await PageSnapshot.create(this.page);
     }
-    const tabList = this.context.tabs().length > 1 ? await this.context.listTabs() + '\n\nCurrent tab:' + '\n' : '';
-    const snapshot = this._snapshot?.text({ status: options?.status, hasFileChooser: !!this._fileChooser }) ?? options?.status ?? '';
+    const tabList = this.context.tabs().length > 1
+      ? await this.context.listTabs() + '\n\nCurrent tab:' + '\n'
+      : '';
+    const snapshot = this._snapshot?.text({ status: options?.status, hasFileChooser: !!this._fileChooser })
+      ?? options?.status ?? '';
     return {
       content: [{
         type: 'text',
@@ -228,6 +238,7 @@ class Tab {
       }],
     };
   }
+
 
   async runAndWait(callback: (tab: Tab) => Promise<void>, options?: RunOptions): Promise<ToolResult> {
     return await this.run(callback, {
@@ -243,6 +254,8 @@ class Tab {
       ...options,
     });
   }
+
+  
 
   lastSnapshot(): PageSnapshot {
     if (!this._snapshot)
